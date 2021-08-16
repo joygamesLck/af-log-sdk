@@ -2,7 +2,6 @@
     "name": "joygames/af-log-sdk",
     "type": "library",
     "description": "PHP SDK for joygames Analytics",
-    "keywords": ["sdk", "thinkingdata"],
     "license": "MIT",
     "authors": [
         {
