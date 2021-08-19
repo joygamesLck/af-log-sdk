@@ -25,63 +25,94 @@ class ThinkingDataAnalytics
     private $publicProperties;
     private $enableUUID;
 
+    // what相关字段
+    private  $whatKeys = [
+        'event','event_type','project','log_level','sub_event','sub_event_desc','event_content'
+    ];
+    // 共用相关字段
+    private  $commonKeys = [
+        'app_id','channel_id','sub_channel_id','ad_id'
+    ];
+    // who相关字段
+    private  $whoKeys = [
+        'user_id','account_id','distinct_id'
+    ];
+    // when相关字段
+    private  $whenKeys = [
+        'event_time','ymd','ym','year','month','week','day','hour','minute','server_time','ym','zone_offset'
+    ];
+    // where相关字段
+    private  $whereKeys = ['ip'];
+    // how相关字段
+    private  $howKeys = [
+        'brand','manufacturer','model','os','os_version','screen_height','screen_width','screen_orientation','wifi','carrier','network_type','device_id','system_language','idfa','imei','android_id','is_emulator','supported_abis'
+    ];
+    // cp客户端相关字段
+    private  $cpClientKeys = [
+        'app_name','app_version','bundle_id','game_name'
+    ];
+    // sdk客户端相关字段
+    private  $sdkClientKeys = [
+        'joy_sdk_version','channel_sdk_version'
+    ];
+    // sdk日志相关字段
+    private  $sdkLogKeys = [
+        'lib','lib_version','lib_method','lib_detail'
+    ];
+    private  $pKeys = ['role_level','event_unique_id','cp_order_id', 'order_id', 'pay_channel'];
+
+    private $allKeys;
+
     function __construct($consumer, $enableUUID = false)
     {
         $this->consumer = $consumer;
         $this->enableUUID = $enableUUID;
         $this->clear_public_properties();
+        $this->merge_properties();
     }
 
     /**
      * 设置用户属性, 覆盖之前设置的属性.
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
      * @param array $properties 用户属性
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function user_set($distinct_id, $account_id, $properties = array())
+    public function user_set($properties = array())
     {
-        return $this->add($distinct_id, $account_id, 'user_set', null, null, $properties);
+        return $this->add('user_set', null, $properties);
     }
 
     /**
      * 设置用户属性, 如果属性已经存在, 则操作无效.
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
      * @param array $properties 用户属性
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function user_setOnce($distinct_id, $account_id, $properties = array())
+    public function user_setOnce($properties = array())
     {
-        return $this->add($distinct_id, $account_id, 'user_setOnce', null, null, $properties);
+        return $this->add('user_setOnce', null, $properties);
     }
 
     /**
      * 修改数值类型的用户属性.
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
      * @param array $properties 用户属性, 其值需为 Number 类型
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function user_add($distinct_id, $account_id, $properties = array())
+    public function user_add($properties = array())
     {
-        return $this->add($distinct_id, $account_id, 'user_add', null, null, $properties);
+        return $this->add('user_add', null, $properties);
     }
 
     /**
      * 追加一个用户的某一个或者多个集合
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
      * @param array $properties key上传的是非关联数组
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function user_append($distinct_id, $account_id, $properties = array())
+    public function user_append($properties = array())
     {
-        return $this->add($distinct_id, $account_id, 'user_append', null, null, $properties);
+        return $this->add('user_append', null, $properties);
     }
 
     /**
@@ -103,77 +134,57 @@ class ThinkingDataAnalytics
 
     /**
      * 删除用户, 此操作不可逆, 请谨慎使用.
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function user_del($distinct_id, $account_id)
+    public function user_del()
     {
-        return $this->add($distinct_id, $account_id, 'user_del', null, null, array());
+        return $this->add('user_del', null, array());
     }
 
     /**
      * 上报事件.
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
-     * @param string $event_name 事件名称
      * @param array $properties 事件属性
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function track($distinct_id, $account_id, $event_name, $properties = array())
+    public function track($properties = array())
     {
-        return $this->add($distinct_id, $account_id, 'track', $event_name, null, $properties);
+        return $this->add( 'track', null, $properties);
     }
 
     /**
      * 上报事件.
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
-     * @param string $event_name 事件名称
      * @param string $event_id 事件ID
      * @param array $properties 事件属性
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function track_update($distinct_id, $account_id, $event_name, $event_id, $properties = array())
+    public function track_update($event_id, $properties = array())
     {
-        return $this->add($distinct_id, $account_id, 'track_update', $event_name, $event_id, $properties);
+        return $this->add('track_update', $event_id, $properties);
     }
 
     /**
      * 上报事件.
-     * @param string $distinct_id 访客 ID
-     * @param string $account_id 账户 ID
-     * @param string $event_name 事件名称
      * @param string $event_id 事件ID
      * @param array $properties 事件属性
      * @return boolean
      * @throws Exception 数据传输，或者写文件失败
      */
-    public function track_overwrite($distinct_id, $account_id, $event_name, $event_id, $properties = array())
+    public function track_overwrite( $event_id, $properties = array())
     {
-        return $this->add($distinct_id, $account_id, 'track_overwrite', $event_name, $event_id, $properties);
+        return $this->add('track_overwrite', $event_id, $properties);
     }
 
-    private function add($distinct_id, $account_id, $type, $event_name, $event_id, $properties)
+    private function add($type, $event_id, $properties)
     {
         $event = array();
-        if (!is_null($event_name) && !is_string($event_name)) {
+        if (isset($properties['event']) && !is_null($properties['event']) && !is_string($properties['event'])) {
             throw new AfDataException("event name must be a str.");
         }
-        if (!$distinct_id && !$account_id) {
-            throw new AfDataException("account_id 和 distinct_id 不能同时为空");
-        }
-        if ($distinct_id) {
-            $event['#distinct_id'] = $distinct_id;
-        }
-        if ($account_id) {
-            $event['#account_id'] = $account_id;
-        }
-        if ($event_name) {
-            $event['#event_name'] = $event_name;
+        if (isset($properties['sub_event']) && !is_null($properties['sub_event']) && !is_string($properties['sub_event'])) {
+            throw new AfDataException("sub_event name must be a str.");
         }
         if ($type == 'track') {
             $properties = array_merge($properties, $this->publicProperties);
@@ -186,26 +197,24 @@ class ThinkingDataAnalytics
             $properties = array_merge($properties, $this->publicProperties);
             $event['#event_id'] = $event_id;
         }
-        $event['#type'] = $type;
-        if (array_key_exists('#ip', $properties)) {
-            $event['#ip'] = $this->extractStringProperty('#ip', $properties);
-        }
-        $event['#time'] = $this->extractUserTime($properties);
-        if (array_key_exists('#app_id', $properties)) {
-            $event['#app_id'] = $this->extractStringProperty('#app_id', $properties);
-        }
-        //#uuid需要标准格式 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx
-        if (array_key_exists('#uuid', $properties)) {
-            $event['#uuid'] = $properties['#uuid'];
-            unset($properties['#uuid']);
-        } elseif ($this->enableUUID) {
-            $event['#uuid'] = $this->uuid();
-        }
+        $event['#event_type'] = $type;
 
+        $event = array_merge($event, $this->extractUserTime($properties));
+        $event['#p'] = $this->extractPData($properties);
+
+        foreach ($this->allKeys as $key){
+            if(!array_key_exists($key, $event)){
+                $event['#' . $key] = '';
+            }
+            if(array_key_exists($key, $properties) && empty($event['#' . $key])){
+                $event['#' . $key] = $properties[$key];
+                unset($properties[$key]);
+            }
+        }
         //检查properties
         $properties = $this->assertProperties($type, $properties);
         if (count($properties) > 0) {
-            $event['properties'] = $properties;
+            $event['#event_content'] = $properties;
         }
 
         return $this->consumer->send(json_encode($event));
@@ -281,14 +290,35 @@ class ThinkingDataAnalytics
         return date($new_format, $timestamp);
     }
 
+    private function extractPData(&$properties = array())
+    {
+        $p = [];
+        foreach ($this->pKeys as $key){
+            if(array_key_exists($key, $properties)){
+                $p[$key] = $properties[$key];
+                unset($properties[$key]);
+            }
+        }
+        return $p;
+    }
+
     private function extractUserTime(&$properties = array())
     {
-        if (array_key_exists('#time', $properties)) {
-            $time = $properties['#time'];
-            unset($properties['#time']);
-            return $time;
+        $time = [];
+        if (array_key_exists('event_time', $properties)) {
+            $time['#event_time'] = $properties['event_time'];
+            $timestamp = strtotime(explode('.', $time['#event_time'])[0]);
+            $time['#ymd'] = intval(date('Ymd', $timestamp));
+            $time['#ym'] = intval(date('Ym', $timestamp));
+            $time['#year'] = intval(date('Y', $timestamp));
+            $time['#month'] = intval(date('m', $timestamp));
+            $time['#week'] = intval(date('w', $timestamp)) == 0 ? 7 : intval(date('w', $timestamp));
+            $time['#day'] = intval(date('d', $timestamp));
+            $time['#hour'] = intval(date('H', $timestamp));
+            $time['#minute'] = intval(date('i', $timestamp));
+            unset($properties['event_time']);
         }
-        return $this->getDatetime();
+        return $time;
     }
 
     private function extractStringProperty($key, &$properties = array())
@@ -318,9 +348,17 @@ class ThinkingDataAnalytics
     public function clear_public_properties()
     {
         $this->publicProperties = array(
-            '#lib' => 'tga_php_sdk',
+            '#lib'         => 'php',
             '#lib_version' => SDK_VERSION,
         );
+    }
+
+    /**
+     * 合并属性key
+     */
+    public function merge_properties()
+    {
+        $this->allKeys = array_merge($this->whatKeys, $this->whenKeys, $this->whereKeys, $this->whoKeys, $this->howKeys, $this->commonKeys, $this->cpClientKeys, $this->sdkClientKeys, $this->sdkLogKeys);
     }
 
     /**
