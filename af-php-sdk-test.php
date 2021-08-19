@@ -53,8 +53,8 @@ $properties['age'] = 20;
 $properties['Product_Name'] = 'c';
 $properties['update_time'] = date('Y-m-d H:i:s', time());
 try {
-    $ta->track($distinct_id, $account_id, "viewPage", $properties);
-    $ta->user_set($distinct_id, $account_id, $properties);
+    $ta->track($properties);
+    $ta->user_set($properties);
 //    $ta->flush();
 } catch (Exception $e) {
     //handle except
@@ -68,7 +68,7 @@ $properties['bri'] = '2010-10-10';
 $properties['money'] = 300;
 $properties['arrkey1'] = ['str1', 'str2'];
 try {
-    $ta->user_set($distinct_id, $account_id, $properties);
+    $ta->user_set($properties);
 } catch (Exception $e) {
     //handle except
     echo $e;
@@ -79,7 +79,7 @@ try {
     //user_set 设置用户属性
     $properties = array();
     $properties['arrkey1'] = ['str3', 'str4'];//为集合类型追加多个值，key-array形式，array里面都是字符串类型
-    $ta->user_append($distinct_id, $account_id, $properties);
+    $ta->user_append($properties);
 } catch (Exception $e) {
     //handle except
     echo $e;
@@ -101,7 +101,7 @@ try {
 $properties = array();
 $properties['level'] = 12.21123;
 try {
-    $ta->user_add(null, $account_id, $properties);
+    $ta->user_add($properties);
 //    $ta->flush();
 } catch (Exception $e) {
     //handle except
@@ -121,7 +121,7 @@ $properties['shopping_time'] = date('Y-m-d H:i:s', strtotime('2018-01-06 10:32:5
 $properties['Product_Name'] = 'a';
 $properties['OrderId'] = "order_id_a";
 try {
-    $ta->track(null, $account_id, "Product_Purchase", $properties);
+    $ta->track($properties);
 //    $ta->flush();
 } catch (Exception $e) {
     //handle except
@@ -133,7 +133,7 @@ $properties['shopping_time'] = date('Y-m-d H:i:s', strtotime('2018-01-06 10:32:5
 $properties['Product_Name'] = 'b';
 $properties['OrderId'] = "order_id_b";
 try {
-    $ta->track(null, $account_id, "Product_Purchase", $properties);
+    $ta->track($properties);
     $ta->flush();
 } catch (Exception $e) {
     echo $e;
@@ -147,7 +147,7 @@ $ta->clear_public_properties();
 $properties = array();
 $properties['Product_Name'] = 'e';
 try {
-    $ta->track(null, $account_id, "Browse_Product", $properties);
+    $ta->track($properties);
 //    $ta->flush();
 } catch (Exception $e) {
     echo $e;
