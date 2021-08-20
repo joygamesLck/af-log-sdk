@@ -3,7 +3,7 @@
  * Date: 2018/8/2
  * Time: 17:14
  */
-define('SDK_VERSION', '1.0.0');
+//define('SDK_VERSION', '1.0.0');
 
 /**
  * 数据格式错误异常
@@ -59,7 +59,7 @@ class AfDataAnalytics
     private  $sdkLogKeys = [
         'lib','lib_version','lib_method','lib_detail'
     ];
-    private  $pKeys = ['role_level','event_unique_id','cp_order_id', 'order_id', 'pay_channel'];
+    private  $pKeys = ['role_level','event_unique_id','cp_order_id', 'order_id', 'pay_channel', 'role_name', 'role_id', 'pay_channel'];
 
     private $allKeys;
 
@@ -207,8 +207,10 @@ class AfDataAnalytics
             if(!array_key_exists($eventKey, $event)){
                 $event[$eventKey] = '';
             }
-            if(array_key_exists($key, $properties) && empty($event[$eventKey])){
-                $event[$eventKey] = $properties[$key];
+            if(array_key_exists($key, $properties)){
+                if(empty($event[$eventKey])){
+                    $event[$eventKey] = $properties[$key];
+                }
                 unset($properties[$key]);
             }
         }
@@ -350,7 +352,7 @@ class AfDataAnalytics
     {
         $this->publicProperties = array(
             'lib'         => 'php',
-            'lib_version' => SDK_VERSION,
+            'lib_version' => '1.0.0',
         );
     }
 
