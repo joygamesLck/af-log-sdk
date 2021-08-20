@@ -59,7 +59,7 @@ class AfDataAnalytics
     private  $sdkLogKeys = [
         'lib','lib_version','lib_method','lib_detail'
     ];
-    private  $pKeys = ['role_level','event_unique_id','cp_order_id', 'order_id', 'pay_channel', 'role_name', 'role_id', 'pay_channel'];
+    private  $pKeys = ['role_level','event_unique_id','cp_order_id', 'order_id', 'pay_channel', 'role_name', 'role_id', 'username'];
 
     private $allKeys;
 
