@@ -217,7 +217,7 @@ class AfDataAnalytics
         //检查properties
         $properties = $this->assertProperties($type, $properties);
         if (count($properties) > 0) {
-            $event['#event_content'] = $properties;
+            $event['#event_content'] = json_encode($properties, JSON_UNESCAPED_UNICODE);
         }
 
         return $this->consumer->send(json_encode($event, JSON_UNESCAPED_UNICODE));
