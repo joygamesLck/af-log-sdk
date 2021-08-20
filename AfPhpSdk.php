@@ -203,11 +203,12 @@ class ThinkingDataAnalytics
         $event['#p'] = $this->extractPData($properties);
 
         foreach ($this->allKeys as $key){
-            if(!array_key_exists($key, $event)){
-                $event['#' . $key] = '';
+            $eventKey = '#' . $key;
+            if(!array_key_exists($eventKey, $event)){
+                $event[$eventKey] = '';
             }
-            if(array_key_exists($key, $properties) && empty($event['#' . $key])){
-                $event['#' . $key] = $properties[$key];
+            if(array_key_exists($key, $properties) && empty($event[$eventKey])){
+                $event[$eventKey] = $properties[$key];
                 unset($properties[$key]);
             }
         }
@@ -348,8 +349,8 @@ class ThinkingDataAnalytics
     public function clear_public_properties()
     {
         $this->publicProperties = array(
-            '#lib'         => 'php',
-            '#lib_version' => SDK_VERSION,
+            'lib'         => 'php',
+            'lib_version' => SDK_VERSION,
         );
     }
 
