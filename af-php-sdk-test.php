@@ -52,6 +52,7 @@ $properties['age'] = 20;
 //$properties['#time'] = date('Y-m-d H:i:s', time());//可以自己上传#event_time发生时刻，不传默认是当前时间,默认上传毫秒级
 $properties['event'] = 'payOrder';
 $properties['sub_event'] = 'apiInit';
+$properties['sub_event_desc'] = '用户未登录时';
 $properties['event_time'] = '2021-08-19 15:09:38.726';
 try {
     $ta->track($properties);

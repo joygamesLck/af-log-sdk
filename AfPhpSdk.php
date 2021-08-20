@@ -220,7 +220,7 @@ class AfDataAnalytics
             $event['#event_content'] = $properties;
         }
 
-        return $this->consumer->send(json_encode($event));
+        return $this->consumer->send(json_encode($event, JSON_UNESCAPED_UNICODE));
     }
 
     private function assertProperties($type, $properties)
