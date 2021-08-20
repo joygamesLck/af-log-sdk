@@ -19,7 +19,7 @@ class AfDataNetWorkException extends \Exception
 {
 }
 
-class ThinkingDataAnalytics
+class AfDataAnalytics
 {
     private $consumer;
     private $publicProperties;
@@ -390,7 +390,7 @@ class ThinkingDataAnalytics
 
 }
 
-abstract class AbstractConsumer
+abstract class AfAbstractConsumer
 {
     /**
      * 发送一条消息, 返回true为send成功。
@@ -418,7 +418,7 @@ abstract class AbstractConsumer
 /**
  * 批量实时写本地文件，文件以天为分隔，需要与 LogBus 搭配使用进行数据上传. 建议使用，不支持多线程
  */
-class FileConsumer extends AbstractConsumer
+class AfFileConsumer extends AfAbstractConsumer
 {
     private $fileHandler;
     private $fileName;
@@ -509,7 +509,7 @@ class FileConsumer extends AbstractConsumer
 /**
  * 批量实时地向TA服务器传输数据，不需要搭配传输工具. 不建议在生产环境中使用，不支持多线程
  */
-class BatchConsumer extends AbstractConsumer
+class AfBatchConsumer extends AfAbstractConsumer
 {
     private $url;
     private $appid;
@@ -690,7 +690,7 @@ class BatchConsumer extends AbstractConsumer
 /**
  * 逐条传输数据，如果发送失败则抛出异常
  */
-class DebugConsumer extends AbstractConsumer
+class AfDebugConsumer extends AfAbstractConsumer
 {
     private $url;
     private $appid;

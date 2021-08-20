@@ -14,7 +14,7 @@ date_default_timezone_set("Asia/Shanghai");
 ////(1)TA初始化1
 
 ////无大小切分，默认按照天切分，文件大小无限大(不影响),一般大的数据量推荐这个
-$ta = new ThinkingDataAnalytics(new FileConsumer());
+$ta = new AfDataAnalytics(new AfFileConsumer());
 //按大小切分,单位为MB
 //$ta = new ThinkingDataAnalytics(new FileConsumer(".",2048));
 
